@@ -3,66 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Produtividade | Secretaria</title>
+    <title>Sistema de Recordes | Secretaria</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .btn-primary { background-color: #0d6efd; border: none; border-radius: 8px; }
-        .rank-1 { background-color: #fff9e6; border: 1px solid #ffd700; }
-        .gold-medal { color: #ffd700; }
-        .chart-container { position: relative; height: 300px; width: 100%; }
-        .table-hover tbody tr:hover { background-color: #f8f9fa; transition: 0.2s; }
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        body { 
+            background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card {
+            border-left: 5px solid var(--primary);
+        }
+
+        .btn-record {
+            background: var(--primary);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .table thead {
+            background-color: transparent;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #64748b;
+        }
+
+        .record-row { animation: fadeInRight 0.5s ease forwards; }
+
+        .medal-icon {
+            font-size: 1.2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
     </style>
 </head>
 <body>
 
 <div class="container py-5">
-    <header class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-dark">Monitor de Atendimento</h1>
-        <p class="text-muted">Ranking de agilidade da Secretaria</p>
+    <header class="mb-5 animate__animated animate__fadeIn">
+        <h1 class="fw-800 text-dark mb-1">Painel de Agilidade</h1>
+        <p class="text-secondary">Secretaria de Alto Desempenho</p>
     </header>
 
+    <div class="row g-4 mb-5 animate__animated animate__fadeInUp">
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card stat-card p-4">
+                <small class="text-uppercase fw-bold text-secondary">Recorde Atual</small>
+                <h2 class="m-0 text-primary" id="statRecorde">--</h2>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-4">
+                <small class="text-uppercase fw-bold text-secondary">Média da Equipe</small>
+                <h2 class="m-0 text-dark" id="statMedia">--</h2>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card p-4">
-                <h4 class="mb-4"><i class="fa-solid fa-phone-volume me-2 text-primary"></i>Novo Registro</h4>
+        <div class="col-lg-4 animate__animated animate__fadeInLeft">
+            <div class="glass-card p-4 sticky-top" style="top: 20px;">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="fa-solid fa-stopwatch me-3 text-primary"></i>Novo Registro
+                </h4>
                 <div class="mb-3">
-                    <label class="form-label text-secondary small fw-bold">NOME DO SERVIDOR</label>
-                    <input type="text" id="nome" class="form-control" placeholder="Ex: Gabriel">
+                    <label class="form-label small fw-600">SERVIDOR</label>
+                    <input type="text" id="nome" class="form-control form-control-lg border-0 bg-light" placeholder="Nome">
                 </div>
                 <div class="mb-4">
-                    <label class="form-label text-secondary small fw-bold">TEMPO DE RESPOSTA (SEG)</label>
-                    <input type="number" id="tempo" class="form-control" placeholder="0.0" step="0.1">
+                    <label class="form-label small fw-600">TEMPO (SEG)</label>
+                    <input type="number" id="tempo" class="form-control form-control-lg border-0 bg-light" placeholder="0.0" step="0.1">
                 </div>
-                <button onclick="salvarRecorde()" class="btn btn-primary w-100 py-2 fw-bold">
-                    REGISTRAR RECORDE
+                <button onclick="salvarRecorde()" class="btn btn-primary btn-record w-100">
+                    REGISTRAR AGORA
                 </button>
             </div>
         </div>
 
-        <div class="col-lg-8">
-            <div class="card p-4 mb-4">
-                <h4 class="mb-3 text-secondary">Visualização de Performance</h4>
-                <div class="chart-container">
-                    <canvas id="meuGrafico"></canvas>
-                </div>
-            </div>
-
-            <div class="card p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="m-0 text-secondary">Ranking Geral</h4>
-                    <button onclick="limparTudo()" class="btn btn-outline-danger btn-sm">Limpar Tudo</button>
+        <div class="col-lg-8 animate__animated animate__fadeInRight">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="m-0 fw-600">Ranking Geral</h4>
+                    <button onclick="limparTudo()" class="btn btn-link text-danger text-decoration-none small">Resetar Base</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table align-middle">
+                        <thead>
                             <tr>
-                                <th>#</th>
+                                <th width="80">Pos</th>
                                 <th>Servidor</th>
                                 <th>Tempo</th>
-                                <th class="text-end">Ações</th>
+                                <th width="100" class="text-end">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaCorpo"></tbody>
@@ -73,94 +130,82 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
-    let meuGrafico;
-
     function salvarRecorde() {
         const nome = document.getElementById('nome').value.trim();
         const tempo = parseFloat(document.getElementById('tempo').value);
 
-        if (!nome || !tempo) return;
+        if (!nome || isNaN(tempo)) {
+            Toastify({ text: "Ei, Sherlock! Preencha os dados corretamente.", backgroundColor: "#ef4444" }).showToast();
+            return;
+        }
 
-        const recordes = JSON.parse(localStorage.getItem('recordes_v2') || '[]');
+        const recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
         recordes.push({ id: Date.now(), nome, tempo });
-        
         recordes.sort((a, b) => a.tempo - b.tempo);
-        localStorage.setItem('recordes_v2', JSON.stringify(recordes));
+        localStorage.setItem('secretaria_pro', JSON.stringify(recordes));
         
         atualizarInterface();
         document.getElementById('nome').value = '';
         document.getElementById('tempo').value = '';
+        
+        Toastify({ text: "Recorde registrado com sucesso!", backgroundColor: "#22c55e" }).showToast();
     }
 
     function excluirRegistro(id) {
-        let recordes = JSON.parse(localStorage.getItem('recordes_v2') || '[]');
+        let recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
         recordes = recordes.filter(r => r.id !== id);
-        localStorage.setItem('recordes_v2', JSON.stringify(recordes));
+        localStorage.setItem('secretaria_pro', JSON.stringify(recordes));
         atualizarInterface();
-    }
-
-    function limparTudo() {
-        if(confirm("Deseja apagar todos os recordes?")) {
-            localStorage.removeItem('recordes_v2');
-            atualizarInterface();
-        }
+        Toastify({ text: "Registro removido.", backgroundColor: "#64748b" }).showToast();
     }
 
     function atualizarInterface() {
-        const recordes = JSON.parse(localStorage.getItem('recordes_v2') || '[]');
+        const recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
         const tbody = document.getElementById('tabelaCorpo');
         tbody.innerHTML = '';
 
+        // Cálculo de Stats
+        if (recordes.length > 0) {
+            const min = Math.min(...recordes.map(r => r.tempo));
+            const media = recordes.reduce((a, b) => a + b.tempo, 0) / recordes.length;
+            document.getElementById('statRecorde').innerText = min.toFixed(1) + 's';
+            document.getElementById('statMedia').innerText = media.toFixed(1) + 's';
+        } else {
+            document.getElementById('statRecorde').innerText = '--';
+            document.getElementById('statMedia').innerText = '--';
+        }
+
         recordes.forEach((r, index) => {
-            const isFirst = index === 0;
+            let medalha = '';
+            if(index === 0) medalha = '🥇';
+            else if(index === 1) medalha = '🥈';
+            else if(index === 2) medalha = '🥉';
+
             const row = `
-                <tr class="${isFirst ? 'rank-1' : ''}">
-                    <td>${isFirst ? '<i class="fa-solid fa-crown gold-medal"></i>' : index + 1}</td>
-                    <td class="fw-bold">${r.nome}</td>
-                    <td><span class="badge bg-info text-dark">${r.tempo}s</span></td>
+                <tr class="record-row">
+                    <td class="fw-bold text-secondary">${medalha || (index + 1 + 'º')}</td>
+                    <td class="fw-600 text-dark">${r.nome}</td>
+                    <td><span class="badge rounded-pill bg-light text-primary border border-primary">${r.tempo}s</span></td>
                     <td class="text-end">
-                        <button onclick="excluirRegistro(${r.id})" class="btn btn-link text-danger p-0">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="excluirRegistro(${r.id})" class="btn btn-link text-muted p-0">
+                            <i class="fa-solid fa-xmark"></i>
                         </button>
                     </td>
                 </tr>`;
             tbody.innerHTML += row;
         });
-
-        renderizarGrafico(recordes);
     }
 
-    function renderizarGrafico(dados) {
-        const ctx = document.getElementById('meuGrafico').getContext('2d');
-        const top5 = dados.slice(0, 5);
-
-        if (meuGrafico) meuGrafico.destroy();
-
-        meuGrafico = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: top5.map(d => d.nome),
-                datasets: [{
-                    label: 'Tempo de Resposta (segundos)',
-                    data: top5.map(d => d.tempo),
-                    backgroundColor: 'rgba(13, 110, 253, 0.6)',
-                    borderColor: '#0d6efd',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true } },
-                plugins: { legend: { display: false } }
-            }
-        });
+    function limparTudo() {
+        if(confirm("Deseja zerar todos os dados?")) {
+            localStorage.removeItem('secretaria_pro');
+            atualizarInterface();
+        }
     }
 
     window.onload = atualizarInterface;
 </script>
-
 </body>
 </html>
