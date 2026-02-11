@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Hub | Secretaria</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1; /* Indigo moderno */
+            --bg: #fdfeff;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body { 
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+            padding-bottom: 40px;
+        }
+
+        .main-container { max-width: 1000px; margin-top: 40px; }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid #f1f5f9;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: fit-content;
+        }
+
+        .input-premium {
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .input-premium:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        .btn-premium {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+            filter: brightness(1.1);
+        }
+
+        .rank-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            animation: fadeInRight 0.5s ease;
+        }
+
+        .rank-row:hover {
+            border-color: var(--primary);
+            background: #fff;
+            transform: scale(1.01);
+        }
+
+        .rank-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .top-1 { background: #fef3c7; color: #d97706; }
+        .other-ranks { background: #e2e8f0; color: #64748b; }
+
+        .time-badge {
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .stat-pill {
+            padding: 15px 20px;
+            border-radius: 16px;
+            background: #f8fafc;
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 220px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container main-container">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <h2 class="fw-bold mb-4 animate__animated animate__fadeIn">Elite <span style="color: var(--primary)">Timer</span>.</h2>
+            
+            <div class="glass-card mb-4">
+                <h5 class="fw-bold mb-4">Novo Registro</h5>
+                <div class="mb-3">
+                    <label class="small fw-bold text-uppercase text-muted mb-2">Funcionário</label>
+                    <input type="text" id="nome" class="form-control input-premium" placeholder="Ex: Gabriel">
+                </div>
+                <div class="mb-4">
+                    <label class="small fw-bold text-uppercase text-muted mb-2">Tempo (Segundos)</label>
+                    <input type="number" id="tempo" class="form-control input-premium" placeholder="0.0" step="0.1">
+                </div>
+                <button onclick="registrar()" class="btn btn-premium w-100">
+                    <i class="fas fa-stopwatch me-2"></i>Salvar Recorde
+                </button>
+            </div>
+
+            <div class="d-flex gap-3 animate__animated animate__fadeInUp">
+                <div class="stat-pill">
+                    <small class="d-block text-muted fw-bold text-uppercase mb-2">Melhor Tempo</small>
+                    <span id="best" class="fs-4 fw-800 text-primary">--</span>
+                </div>
+                <div class="stat-pill">
+                    <small class="d-block text-muted fw-bold text-uppercase mb-2">Média Equipe</small>
+                    <span id="avg" class="fs-4 fw-800">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="glass-card mb-4 animate__animated animate__fadeIn">
+                <h5 class="fw-bold mb-3">Top 5 Performance</h5>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card animate__animated animate__fadeIn">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold m-0">Ranking Geral</h5>
+                    <button onclick="limpar()" class="btn btn-link text-muted text-decoration-none small p-0">
+                        <i class="fas fa-trash-alt me-1"></i>Resetar
+                    </button>
+                </div>
+                <div id="listaRanking" style="max-height: 400px; overflow-y: auto;">
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    let myChart; // Variável global para o gráfico
+
+    function registrar() {
+        const nome = document.getElementById('nome').value.trim();
+        const tempo = parseFloat(document.getElementById('tempo').value);
+
+        if (!nome || isNaN(tempo)) return;
+
+        const dados = JSON.parse(localStorage.getItem('secretaria_v5') || '[]');
+        const anterior = dados.length > 0 ? Math.min(...dados.map(d => d.tempo)) : Infinity;
+        
+        dados.push({ id: Date.now(), nome, tempo });
+        dados.sort((a, b) => a.tempo - b.tempo);
+        localStorage.setItem('secretaria_v5', JSON.stringify(dados));
+
+        if (tempo < anterior) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#a5b4fc'] });
+        }
+        
+        atualizar();
+        document.getElementById('nome').value = '';
+        document.getElementById('tempo').value = '';
+    }
+
+    function deletar(id) {
+        let dados = JSON.parse(localStorage.getItem('secretaria_v5') || '[]');
+        dados = dados.filter(d => d.id !== id);
+        localStorage.setItem('secretaria_v5', JSON.stringify(dados));
+        atualizar();
+    }
+
+    function atualizar() {
+        const dados = JSON.parse(localStorage.getItem('secretaria_v5') || '[]');
+        const lista = document.getElementById('listaRanking');
+        lista.innerHTML = '';
+
+        // 1. Atualiza Stats e Lista
+        if(dados.length > 0) {
+            const min = Math.min(...dados.map(d => d.tempo));
+            const media = dados.reduce((a, b) => a + b.tempo, 0) / dados.length;
+            document.getElementById('best').innerText = min.toFixed(1) + 's';
+            document.getElementById('avg').innerText = media.toFixed(1) + 's';
+
+            dados.forEach((r, i) => {
+                const isFirst = i === 0;
+                lista.innerHTML += `
+                    <div class="rank-row">
+                        <div class="rank-number ${isFirst ? 'top-1' : 'other-ranks'}">${i+1}</div>
+                        <div class="flex-grow-1 text-truncate pe-2">
+                            <span class="fw-bold">${r.nome}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="time-badge me-3">${r.tempo}s</span>
+                            <button onclick="deletar(${r.id})" class="btn btn-sm text-danger opacity-25 hover-opacity-100 p-1"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+             document.getElementById('best').innerText = '--';
+             document.getElementById('avg').innerText = '--';
+        }
+
+        // 2. Renderiza o Gráfico
+        renderizarGrafico(dados);
+    }
+
+    function renderizarGrafico(dados) {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const top5 = dados.slice(0, 5); // Pega apenas os 5 melhores
+
+        if (myChart) myChart.destroy(); // Destrói gráfico anterior para não sobrepor
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: top5.map(d => d.nome),
+                datasets: [{
+                    label: 'Tempo (segundos)',
+                    data: top5.map(d => d.tempo),
+                    backgroundColor: 'rgba(99, 102, 241, 0.8)', // Cor Indigo com transparência
+                    borderColor: '#6366f1',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barThickness: 25
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { family: 'Inter' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Inter', weight: '500' } }
+                    }
+                }
+            }
+        });
+    }
+
+    function limpar() { if(confirm("Tem certeza que deseja zerar todos os registros?")) { localStorage.removeItem('secretaria_v5'); atualizar(); } }
+    
+    window.onload = atualizar;
+</script>
+</body>
+</html>
