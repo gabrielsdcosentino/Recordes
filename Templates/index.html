@@ -3,209 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Recordes | Secretaria</title>
+    <title>Performance Hub | Secretaria</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.8);
+            --primary: #6366f1; /* Indigo moderno */
+            --bg: #fdfeff;
+            --card-bg: #ffffff;
+            --text: #1e293b;
         }
 
         body { 
-            background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
-            font-family: 'Montserrat', sans-serif;
-            min-height: 100vh;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
         }
+
+        .main-container { max-width: 900px; margin-top: 60px; }
 
         .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
+            background: var(--card-bg);
+            border: 1px solid #f1f5f9;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .stat-card {
-            border-left: 5px solid var(--primary);
-        }
-
-        .btn-record {
-            background: var(--primary);
-            border: none;
-            padding: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .input-premium {
+            border: 2px solid #f1f5f9;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: 0.2s;
         }
 
-        .table thead {
-            background-color: transparent;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            color: #64748b;
+        .input-premium:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            outline: none;
         }
 
-        .record-row { animation: fadeInRight 0.5s ease forwards; }
+        .btn-premium {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
 
-        .medal-icon {
-            font-size: 1.2rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+            filter: brightness(1.1);
+        }
+
+        .rank-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            animation: fadeInRight 0.5s ease;
+        }
+
+        .rank-row:hover {
+            border-color: var(--primary);
+            background: #fff;
+            transform: scale(1.02);
+        }
+
+        .rank-number {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 20px;
+            font-size: 0.9rem;
+        }
+
+        .top-1 { background: #fef3c7; color: #d97706; }
+        .other-ranks { background: #e2e8f0; color: #64748b; }
+
+        .time-badge {
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .stat-pill {
+            padding: 10px 20px;
+            border-radius: 14px;
+            background: #f1f5f9;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<div class="container py-5">
-    <header class="mb-5 animate__animated animate__fadeIn">
-        <h1 class="fw-800 text-dark mb-1">Painel de Agilidade</h1>
-        <p class="text-secondary">Secretaria de Alto Desempenho</p>
-    </header>
-
-    <div class="row g-4 mb-5 animate__animated animate__fadeInUp">
-        <div class="col-md-6 col-lg-3">
-            <div class="glass-card stat-card p-4">
-                <small class="text-uppercase fw-bold text-secondary">Recorde Atual</small>
-                <h2 class="m-0 text-primary" id="statRecorde">--</h2>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="glass-card p-4">
-                <small class="text-uppercase fw-bold text-secondary">Média da Equipe</small>
-                <h2 class="m-0 text-dark" id="statMedia">--</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-lg-4 animate__animated animate__fadeInLeft">
-            <div class="glass-card p-4 sticky-top" style="top: 20px;">
-                <h4 class="mb-4 d-flex align-items-center">
-                    <i class="fa-solid fa-stopwatch me-3 text-primary"></i>Novo Registro
-                </h4>
+<div class="container main-container">
+    <div class="row g-5">
+        <div class="col-md-5">
+            <h1 class="fw-bold mb-4 animate__animated animate__fadeIn">Elite <span style="color: var(--primary)">Timer</span>.</h1>
+            <div class="glass-card">
                 <div class="mb-3">
-                    <label class="form-label small fw-600">SERVIDOR</label>
-                    <input type="text" id="nome" class="form-control form-control-lg border-0 bg-light" placeholder="Nome">
+                    <label class="small fw-bold text-uppercase text-muted mb-2">Funcionário</label>
+                    <input type="text" id="nome" class="form-control input-premium" placeholder="Ex: Gabriel">
                 </div>
                 <div class="mb-4">
-                    <label class="form-label small fw-600">TEMPO (SEG)</label>
-                    <input type="number" id="tempo" class="form-control form-control-lg border-0 bg-light" placeholder="0.0" step="0.1">
+                    <label class="small fw-bold text-uppercase text-muted mb-2">Tempo de Resposta</label>
+                    <input type="number" id="tempo" class="form-control input-premium" placeholder="Segundos" step="0.1">
                 </div>
-                <button onclick="salvarRecorde()" class="btn btn-primary btn-record w-100">
-                    REGISTRAR AGORA
-                </button>
+                <button onclick="registrar()" class="btn btn-premium w-100 mb-4">Salvar Recorde</button>
+
+                <div class="d-flex justify-content-between">
+                    <div class="stat-pill">
+                        <small class="d-block text-muted fw-bold">MELHOR</small>
+                        <span id="best" class="fw-700">--</span>
+                    </div>
+                    <div class="stat-pill">
+                        <small class="d-block text-muted fw-bold">MÉDIA</small>
+                        <span id="avg" class="fw-700">--</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="col-lg-8 animate__animated animate__fadeInRight">
-            <div class="glass-card p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="m-0 fw-600">Ranking Geral</h4>
-                    <button onclick="limparTudo()" class="btn btn-link text-danger text-decoration-none small">Resetar Base</button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th width="80">Pos</th>
-                                <th>Servidor</th>
-                                <th>Tempo</th>
-                                <th width="100" class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaCorpo"></tbody>
-                    </table>
-                </div>
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">Leaderboard</h3>
+                <button onclick="limpar()" class="btn btn-link text-muted text-decoration-none small">Resetar Base</button>
             </div>
+            <div id="listaRanking">
+                </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
-    function salvarRecorde() {
+    function registrar() {
         const nome = document.getElementById('nome').value.trim();
         const tempo = parseFloat(document.getElementById('tempo').value);
 
-        if (!nome || isNaN(tempo)) {
-            Toastify({ text: "Ei, Sherlock! Preencha os dados corretamente.", backgroundColor: "#ef4444" }).showToast();
-            return;
-        }
+        if (!nome || isNaN(tempo)) return;
 
-        const recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
-        recordes.push({ id: Date.now(), nome, tempo });
-        recordes.sort((a, b) => a.tempo - b.tempo);
-        localStorage.setItem('secretaria_pro', JSON.stringify(recordes));
+        const dados = JSON.parse(localStorage.getItem('secretaria_v4') || '[]');
+        const anterior = dados.length > 0 ? Math.min(...dados.map(d => d.tempo)) : Infinity;
         
-        atualizarInterface();
+        dados.push({ id: Date.now(), nome, tempo });
+        dados.sort((a, b) => a.tempo - b.tempo);
+        localStorage.setItem('secretaria_v4', JSON.stringify(dados));
+
+        if (tempo < anterior) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#a5b4fc'] });
+        }
+        
+        atualizar();
         document.getElementById('nome').value = '';
         document.getElementById('tempo').value = '';
-        
-        Toastify({ text: "Recorde registrado com sucesso!", backgroundColor: "#22c55e" }).showToast();
     }
 
-    function excluirRegistro(id) {
-        let recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
-        recordes = recordes.filter(r => r.id !== id);
-        localStorage.setItem('secretaria_pro', JSON.stringify(recordes));
-        atualizarInterface();
-        Toastify({ text: "Registro removido.", backgroundColor: "#64748b" }).showToast();
+    function deletar(id) {
+        let dados = JSON.parse(localStorage.getItem('secretaria_v4') || '[]');
+        dados = dados.filter(d => d.id !== id);
+        localStorage.setItem('secretaria_v4', JSON.stringify(dados));
+        atualizar();
     }
 
-    function atualizarInterface() {
-        const recordes = JSON.parse(localStorage.getItem('secretaria_pro') || '[]');
-        const tbody = document.getElementById('tabelaCorpo');
-        tbody.innerHTML = '';
+    function atualizar() {
+        const dados = JSON.parse(localStorage.getItem('secretaria_v4') || '[]');
+        const lista = document.getElementById('listaRanking');
+        lista.innerHTML = '';
 
-        // Cálculo de Stats
-        if (recordes.length > 0) {
-            const min = Math.min(...recordes.map(r => r.tempo));
-            const media = recordes.reduce((a, b) => a + b.tempo, 0) / recordes.length;
-            document.getElementById('statRecorde').innerText = min.toFixed(1) + 's';
-            document.getElementById('statMedia').innerText = media.toFixed(1) + 's';
-        } else {
-            document.getElementById('statRecorde').innerText = '--';
-            document.getElementById('statMedia').innerText = '--';
-        }
+        if(dados.length > 0) {
+            const min = Math.min(...dados.map(d => d.tempo));
+            const media = dados.reduce((a, b) => a + b.tempo, 0) / dados.length;
+            document.getElementById('best').innerText = min.toFixed(1) + 's';
+            document.getElementById('avg').innerText = media.toFixed(1) + 's';
 
-        recordes.forEach((r, index) => {
-            let medalha = '';
-            if(index === 0) medalha = '🥇';
-            else if(index === 1) medalha = '🥈';
-            else if(index === 2) medalha = '🥉';
-
-            const row = `
-                <tr class="record-row">
-                    <td class="fw-bold text-secondary">${medalha || (index + 1 + 'º')}</td>
-                    <td class="fw-600 text-dark">${r.nome}</td>
-                    <td><span class="badge rounded-pill bg-light text-primary border border-primary">${r.tempo}s</span></td>
-                    <td class="text-end">
-                        <button onclick="excluirRegistro(${r.id})" class="btn btn-link text-muted p-0">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    function limparTudo() {
-        if(confirm("Deseja zerar todos os dados?")) {
-            localStorage.removeItem('secretaria_pro');
-            atualizarInterface();
+            dados.slice(0, 8).forEach((r, i) => {
+                const isFirst = i === 0;
+                lista.innerHTML += `
+                    <div class="rank-row animate__animated animate__fadeInUp">
+                        <div class="rank-number ${isFirst ? 'top-1' : 'other-ranks'}">${i+1}</div>
+                        <div class="flex-grow-1">
+                            <span class="fw-bold">${r.nome}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="time-badge me-3">${r.tempo}s</span>
+                            <button onclick="deletar(${r.id})" class="btn btn-sm text-danger opacity-50"><i class="fas fa-trash"></i>×</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
     }
 
-    window.onload = atualizarInterface;
+    function limpar() { if(confirm("Zerar registros?")) { localStorage.removeItem('secretaria_v4'); atualizar(); } }
+    window.onload = atualizar;
 </script>
 </body>
 </html>
